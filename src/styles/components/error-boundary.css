@@ -1,0 +1,129 @@
+/* Error boundary container */
+.error-boundary-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.error-boundary-content {
+    width: 100%;
+    height: 100%;
+}
+
+/* Error boundary fallback */
+.error-boundary-fallback {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background-color: var(--background-color, #fff);
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Default fallback styles */
+.error-boundary-default-fallback {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.error-boundary-default-fallback .error-message {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--error-color, #dc3545);
+    margin-bottom: 1rem;
+}
+
+.error-boundary-default-fallback .error-details {
+    font-family: monospace;
+    font-size: 0.875rem;
+    background-color: var(--code-background, #f8f9fa);
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 200px;
+    overflow-y: auto;
+    color: var(--code-color, #666);
+}
+
+.error-boundary-default-fallback .retry-button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--button-text-color, #fff);
+    background-color: var(--primary-color, #007bff);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.error-boundary-default-fallback .retry-button:hover {
+    background-color: var(--primary-color-hover, #0056b3);
+}
+
+.error-boundary-default-fallback .retry-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--primary-color-focus, rgba(0, 123, 255, 0.25));
+}
+
+/* Dark theme support */
+[data-theme="dark"] .error-boundary-fallback {
+    --background-color: #1a1a1a;
+    --border-color: #333;
+    --error-color: #ff4d4d;
+    --code-background: #2d2d2d;
+    --code-color: #d4d4d4;
+    --button-text-color: #fff;
+    --primary-color: #0066cc;
+    --primary-color-hover: #0052a3;
+    --primary-color-focus: rgba(0, 102, 204, 0.25);
+}
+
+/* Accessibility */
+.error-boundary-fallback:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--focus-ring-color, rgba(0, 123, 255, 0.25));
+}
+
+/* Animation */
+@keyframes errorBoundaryFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.error-boundary-fallback {
+    animation: errorBoundaryFadeIn 0.3s ease-out;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .error-boundary-fallback {
+        padding: 1rem;
+    }
+
+    .error-boundary-default-fallback .error-message {
+        font-size: 1.125rem;
+    }
+
+    .error-boundary-default-fallback .error-details {
+        font-size: 0.8125rem;
+        max-height: 150px;
+    }
+}

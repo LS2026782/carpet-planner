@@ -1,0 +1,238 @@
+name: Accessibility and Theme Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  accessibility:
+    name: Run Accessibility Tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps
+
+    - name: Build project
+      run: npm run build
+
+    - name: Start development server
+      run: npm run dev &
+      env:
+        PORT: 3000
+
+    - name: Wait for server
+      run: |
+        echo "Waiting for server to start..."
+        timeout 30 bash -c 'while ! nc -z localhost 3000; do sleep 1; done'
+        echo "Server is up!"
+
+    - name: Run accessibility tests
+      run: npm run test:accessibility
+      env:
+        CI: true
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: accessibility-test-results
+        path: test-results/
+        retention-days: 30
+
+    - name: Upload test report
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: accessibility-report
+        path: playwright-report/
+        retention-days: 30
+
+    - name: Process test results
+      if: always()
+      run: |
+        if [ -f test-results/summary.json ]; then
+          echo "Test Summary:"
+          cat test-results/summary.json | jq '.'
+          
+          # Check if any tests failed
+          FAILED_TESTS=$(cat test-results/summary.json | jq '.failed')
+          if [ "$FAILED_TESTS" -gt 0 ]; then
+            echo "::error::$FAILED_TESTS accessibility tests failed"
+            exit 1
+          fi
+        else
+          echo "::error::No test summary found"
+          exit 1
+        fi
+
+  theme:
+    name: Run Theme Tests
+    runs-on: ubuntu-latest
+    needs: accessibility
+
+    strategy:
+      matrix:
+        browser: [chromium, firefox, webkit]
+        theme: [default, dark, high-contrast]
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps
+
+    - name: Build project
+      run: npm run build
+
+    - name: Start development server
+      run: npm run dev &
+      env:
+        PORT: 3000
+
+    - name: Wait for server
+      run: |
+        echo "Waiting for server to start..."
+        timeout 30 bash -c 'while ! nc -z localhost 3000; do sleep 1; done'
+        echo "Server is up!"
+
+    - name: Run theme tests
+      run: npm run test:theme:ci -- --browser ${{ matrix.browser }} --theme ${{ matrix.theme }}
+      env:
+        CI: true
+        BROWSER: ${{ matrix.browser }}
+        THEME: ${{ matrix.theme }}
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: theme-test-results-${{ matrix.browser }}-${{ matrix.theme }}
+        path: test-results/theme-tests/
+        retention-days: 30
+
+    - name: Upload test report
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: theme-report-${{ matrix.browser }}-${{ matrix.theme }}
+        path: test-results/theme-tests/html-report/
+        retention-days: 30
+
+  create-issue:
+    name: Create Issue for Test Failures
+    runs-on: ubuntu-latest
+    needs: [accessibility, theme]
+    if: failure()
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Download all artifacts
+      uses: actions/download-artifact@v3
+      with:
+        path: artifacts
+
+    - name: Create issue for test failures
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          
+          try {
+            // Collect all test results
+            const results = {
+              accessibility: { failed: 0, total: 0 },
+              theme: { failed: 0, total: 0, details: {} }
+            };
+            
+            // Process accessibility results
+            const accessibilityPath = path.join('artifacts', 'accessibility-test-results', 'summary.json');
+            if (fs.existsSync(accessibilityPath)) {
+              const accessibilitySummary = JSON.parse(fs.readFileSync(accessibilityPath, 'utf8'));
+              results.accessibility.failed = accessibilitySummary.failed || 0;
+              results.accessibility.total = accessibilitySummary.total || 0;
+            }
+            
+            // Process theme results
+            const themeResultsPath = 'artifacts';
+            if (fs.existsSync(themeResultsPath)) {
+              fs.readdirSync(themeResultsPath).forEach(dir => {
+                if (dir.startsWith('theme-test-results-')) {
+                  const summaryPath = path.join(themeResultsPath, dir, 'summary.json');
+                  if (fs.existsSync(summaryPath)) {
+                    const themeSummary = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
+                    const [browser, theme] = dir.replace('theme-test-results-', '').split('-');
+                    results.theme.details[`${browser}-${theme}`] = themeSummary;
+                    results.theme.failed += themeSummary.failed || 0;
+                    results.theme.total += themeSummary.total || 0;
+                  }
+                }
+              });
+            }
+            
+            const issueBody = `
+            # Test Failures Report
+            
+            ## Accessibility Tests
+            - Failed: ${results.accessibility.failed}
+            - Total: ${results.accessibility.total}
+            
+            ## Theme Tests
+            - Failed: ${results.theme.failed}
+            - Total: ${results.theme.total}
+            
+            ### Theme Test Details
+            ${Object.entries(results.theme.details).map(([config, summary]) => `
+            #### ${config}
+            - Failed: ${summary.failed}
+            - Total: ${summary.total}
+            - Duration: ${summary.duration / 1000}s
+            `).join('\n')}
+            
+            ## Details
+            See the [test results](${context.payload.repository.html_url}/actions/runs/${context.runId}) for more information.
+            `;
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🚨 Accessibility and Theme Test Failures',
+              body: issueBody,
+              labels: ['accessibility', 'theme', 'bug', 'automated']
+            });
+          } catch (error) {
+            console.error('Error creating issue:', error);
+          }
+
+    - name: Cleanup
+      if: always()
+      run: |
+        pkill -f "npm run dev" || true
+        rm -rf artifacts/

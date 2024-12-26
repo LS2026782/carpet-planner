@@ -1,0 +1,458 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Test Report Schema",
+  "description": "Schema for test report JSON output",
+  "type": "object",
+  "required": ["metadata", "summary", "environment", "configuration", "browserResults", "themeResults", "metrics"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["timestamp", "version"],
+      "properties": {
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of report generation"
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of the application"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Git repository URL"
+        },
+        "branch": {
+          "type": "string",
+          "description": "Git branch name"
+        },
+        "commit": {
+          "type": "string",
+          "description": "Git commit hash"
+        },
+        "runId": {
+          "type": "string",
+          "description": "Unique identifier for test run"
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["total", "passed", "failed", "skipped", "duration", "status"],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skipped": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "duration": {
+          "type": "number",
+          "minimum": 0
+        },
+        "status": {
+          "type": "string",
+          "enum": ["passed", "failed", "error"]
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "required": ["node", "os", "ci"],
+      "properties": {
+        "node": {
+          "type": "string",
+          "description": "Node.js version"
+        },
+        "os": {
+          "type": "string",
+          "description": "Operating system"
+        },
+        "ci": {
+          "type": "boolean",
+          "description": "Whether running in CI environment"
+        },
+        "platform": {
+          "type": "string",
+          "description": "Platform details"
+        },
+        "arch": {
+          "type": "string",
+          "description": "System architecture"
+        },
+        "memory": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "number",
+              "description": "Total memory in bytes"
+            },
+            "free": {
+              "type": "number",
+              "description": "Free memory in bytes"
+            },
+            "used": {
+              "type": "number",
+              "description": "Used memory in bytes"
+            }
+          }
+        }
+      }
+    },
+    "configuration": {
+      "type": "object",
+      "required": ["browsers", "themes"],
+      "properties": {
+        "browsers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "version"],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "headless": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "themes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "features": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "retries": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "workers": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "timeout": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "parallelization": {
+          "type": "boolean"
+        }
+      }
+    },
+    "browserResults": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["total", "passed", "failed", "skipped", "duration", "tests"],
+        "properties": {
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "passed": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "failed": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "skipped": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "duration": {
+            "type": "number",
+            "minimum": 0
+          },
+          "tests": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/testResult"
+            }
+          }
+        }
+      }
+    },
+    "themeResults": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["total", "passed", "failed", "skipped", "duration", "tests"],
+        "properties": {
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "passed": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "failed": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "skipped": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "duration": {
+            "type": "number",
+            "minimum": 0
+          },
+          "tests": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/testResult"
+            }
+          }
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "required": ["performance", "resources"],
+      "properties": {
+        "performance": {
+          "type": "object",
+          "required": ["averageDuration", "slowestTest", "fastestTest"],
+          "properties": {
+            "averageDuration": {
+              "type": "number",
+              "minimum": 0
+            },
+            "slowestTest": {
+              "type": "object",
+              "required": ["name", "duration"],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "duration": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              }
+            },
+            "fastestTest": {
+              "type": "object",
+              "required": ["name", "duration"],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "duration": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              }
+            }
+          }
+        },
+        "resources": {
+          "type": "object",
+          "required": ["memory", "cpu", "network"],
+          "properties": {
+            "memory": {
+              "type": "object",
+              "required": ["peak", "average"],
+              "properties": {
+                "peak": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "average": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              }
+            },
+            "cpu": {
+              "type": "object",
+              "required": ["peak", "average"],
+              "properties": {
+                "peak": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "average": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              }
+            },
+            "network": {
+              "type": "object",
+              "required": ["requests", "bytes"],
+              "properties": {
+                "requests": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "properties": {
+        "screenshots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/artifact"
+          }
+        },
+        "traces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/artifact"
+          }
+        },
+        "videos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/artifact"
+          }
+        }
+      }
+    },
+    "annotations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "message", "timestamp"],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "testResult": {
+      "type": "object",
+      "required": ["id", "name", "status", "duration"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "theme": {
+          "type": "string"
+        },
+        "browser": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["passed", "failed", "skipped"]
+        },
+        "duration": {
+          "type": "number",
+          "minimum": 0
+        },
+        "error": {
+          "type": "object",
+          "required": ["message"],
+          "properties": {
+            "message": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "stack": {
+              "type": "string"
+            }
+          }
+        },
+        "skipped": {
+          "type": "object",
+          "required": ["reason"],
+          "properties": {
+            "reason": {
+              "type": "string"
+            }
+          }
+        },
+        "metadata": {
+          "type": "object"
+        },
+        "logs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "required": ["name", "path", "timestamp"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

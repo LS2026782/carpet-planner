@@ -1,0 +1,33 @@
+#canvas-container {
+    border: 2px solid #ccc;
+    margin: 20px 0;
+    overflow: auto;
+    max-width: 100%;
+    height: 800px;
+    position: relative;
+}
+
+#canvas-container.mode-draw {
+    cursor: crosshair;
+}
+
+#canvas-container.mode-pan {
+    cursor: grab;
+}
+
+#canvas-container.mode-pan:active {
+    cursor: grabbing;
+}
+
+#canvas-container.mode-drop {
+    cursor: cell;
+}
+
+#canvas-container.mode-door {
+    cursor: pointer;
+}
+
+canvas {
+    background: white;
+    transform-origin: 0 0;
+}

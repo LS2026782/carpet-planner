@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Report - Carpet Planner</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --border-color: #dee2e6;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 2rem;
+            color: var(--dark-color);
+            background-color: var(--light-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .summary-card h3 {
+            margin: 0 0 0.5rem 0;
+            color: var(--dark-color);
+        }
+
+        .summary-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .passed { color: var(--success-color); }
+        .failed { color: var(--danger-color); }
+        .skipped { color: var(--warning-color); }
+
+        .details {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--light-color);
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: rgba(0,0,0,0.02);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-passed {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-failed {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+        }
+
+        .status-skipped {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning-color);
+        }
+
+        .error-message {
+            font-family: monospace;
+            font-size: 0.875rem;
+            color: var(--danger-color);
+            max-width: 400px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .timestamp {
+            color: #666;
+            font-size: 0.875rem;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        select {
+            padding: 0.375rem 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: white;
+        }
+
+        @media (max-width: 768px) {
+            .summary {
+                grid-template-columns: 1fr;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            .container {
+                padding: 0;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --light-color: #1a1a1a;
+                --dark-color: #f8f9fa;
+                --border-color: #444;
+            }
+
+            body {
+                background-color: #121212;
+            }
+
+            .summary-card, .details {
+                background-color: #1e1e1e;
+            }
+
+            tr:hover {
+                background-color: rgba(255,255,255,0.02);
+            }
+
+            select {
+                background-color: #1e1e1e;
+                color: var(--dark-color);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Test Report</h1>
+            <div class="timestamp">Generated on: {{timestamp}}</div>
+        </div>
+
+        <div class="summary">
+            <div class="summary-card">
+                <h3>Total Tests</h3>
+                <div class="summary-value">{{totalTests}}</div>
+            </div>
+            <div class="summary-card">
+                <h3>Passed</h3>
+                <div class="summary-value passed">{{passed}}</div>
+            </div>
+            <div class="summary-card">
+                <h3>Failed</h3>
+                <div class="summary-value failed">{{failed}}</div>
+            </div>
+            <div class="summary-card">
+                <h3>Skipped</h3>
+                <div class="summary-value skipped">{{skipped}}</div>
+            </div>
+            <div class="summary-card">
+                <h3>Duration</h3>
+                <div class="summary-value">{{duration}}s</div>
+            </div>
+        </div>
+
+        <div class="details">
+            <h2>Test Details</h2>
+            
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="browser-filter">Browser:</label>
+                    <select id="browser-filter">
+                        <option value="all">All</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="theme-filter">Theme:</label>
+                    <select id="theme-filter">
+                        <option value="all">All</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="status-filter">Status:</label>
+                    <select id="status-filter">
+                        <option value="all">All</option>
+                        <option value="passed">Passed</option>
+                        <option value="failed">Failed</option>
+                        <option value="skipped">Skipped</option>
+                    </select>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Test</th>
+                        <th>Browser</th>
+                        <th>Theme</th>
+                        <th>Status</th>
+                        <th>Duration</th>
+                        <th>Error</th>
+                    </tr>
+                </thead>
+                <tbody id="test-results">
+                    <!-- Test results will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Test data will be injected here
+        window.testData = {{{testData}}};
+
+        // Initialize filters
+        const filters = {
+            browser: document.getElementById('browser-filter'),
+            theme: document.getElementById('theme-filter'),
+            status: document.getElementById('status-filter')
+        };
+
+        // Populate filter options
+        const browsers = [...new Set(window.testData.tests.map(t => t.browser))].sort();
+        const themes = [...new Set(window.testData.tests.map(t => t.theme))].sort();
+
+        browsers.forEach(browser => {
+            if (browser) {
+                const option = document.createElement('option');
+                option.value = browser;
+                option.textContent = browser;
+                filters.browser.appendChild(option);
+            }
+        });
+
+        themes.forEach(theme => {
+            if (theme) {
+                const option = document.createElement('option');
+                option.value = theme;
+                option.textContent = theme;
+                filters.theme.appendChild(option);
+            }
+        });
+
+        // Render test results
+        function renderTestResults(tests) {
+            const tbody = document.getElementById('test-results');
+            tbody.innerHTML = tests.map(test => `
+                <tr>
+                    <td>${test.name}</td>
+                    <td>${test.browser || 'N/A'}</td>
+                    <td>${test.theme || 'N/A'}</td>
+                    <td>
+                        <span class="status-badge status-${test.status}">
+                            ${test.status}
+                        </span>
+                    </td>
+                    <td>${(test.duration / 1000).toFixed(2)}s</td>
+                    <td>
+                        ${test.error ? `<div class="error-message">${test.error}</div>` : ''}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Filter table rows
+        function filterRows() {
+            const browserValue = filters.browser.value;
+            const themeValue = filters.theme.value;
+            const statusValue = filters.status.value;
+
+            const filteredTests = window.testData.tests.filter(test => {
+                return (browserValue === 'all' || test.browser === browserValue) &&
+                       (themeValue === 'all' || test.theme === themeValue) &&
+                       (statusValue === 'all' || test.status === statusValue);
+            });
+
+            renderTestResults(filteredTests);
+        }
+
+        // Add filter event listeners
+        Object.values(filters).forEach(filter => {
+            filter.addEventListener('change', filterRows);
+        });
+
+        // Initial render
+        renderTestResults(window.testData.tests);
+    </script>
+</body>
+</html>

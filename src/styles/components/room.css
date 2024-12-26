@@ -1,0 +1,85 @@
+.room-panel {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 5px;
+}
+
+.room-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin: 10px 0;
+}
+
+.room-item {
+    padding: 10px;
+    margin: 5px 0;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.room-item.selected {
+    background: #e3f2fd;
+    border-color: #2196f3;
+}
+
+.room-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.room-details {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 5px;
+}
+
+.room-label {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 2px 6px;
+    border: 1px solid #000;
+    border-radius: 3px;
+    font-size: 12px;
+    pointer-events: none;
+}
+
+.edit-room-form {
+    margin-top: 10px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 5px;
+}
+
+.edit-room-form input {
+    margin: 5px 0;
+    padding: 5px;
+}
+
+.room-style {
+    margin-top: 10px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 5px;
+}
+
+.room-style div {
+    margin-top: 10px;
+}
+
+.room-style label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.room-style select,
+.room-style input {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}

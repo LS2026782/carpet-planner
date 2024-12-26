@@ -1,0 +1,262 @@
+name: Visual Tests
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'styles/**'
+      - '.github/workflows/visual-tests.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'styles/**'
+      - '.github/workflows/visual-tests.yml'
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  prepare:
+    name: Prepare Environment
+    runs-on: ubuntu-latest
+    outputs:
+      cache-key: ${{ steps.cache-key.outputs.value }}
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # Needed for baseline comparison
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Generate cache key
+      id: cache-key
+      run: |
+        echo "value=${{ hashFiles('src/**', 'public/**', 'styles/**') }}" >> $GITHUB_OUTPUT
+
+  baselines:
+    name: Generate Baselines
+    needs: prepare
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps
+
+    - name: Build project
+      run: npm run build
+
+    - name: Start development server
+      run: npm run dev &
+      env:
+        PORT: 3000
+
+    - name: Wait for server
+      run: |
+        echo "Waiting for server to start..."
+        timeout 30 bash -c 'while ! nc -z localhost 3000; do sleep 1; done'
+        echo "Server is up!"
+
+    # Generate baselines
+    - name: Generate baseline screenshots
+      run: npm run baseline:clean
+
+    # Cache baselines
+    - name: Cache baseline screenshots
+      uses: actions/cache@v3
+      with:
+        path: test-results/visual-tests/snapshots
+        key: visual-baseline-${{ needs.prepare.outputs.cache-key }}
+
+  visual-tests:
+    name: Visual Tests
+    needs: [prepare, baselines]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [chromium, firefox, webkit]
+        theme: [default, dark, high-contrast]
+        viewport: [desktop, tablet, mobile]
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps
+
+    - name: Build project
+      run: npm run build
+
+    - name: Start development server
+      run: npm run dev &
+      env:
+        PORT: 3000
+
+    - name: Wait for server
+      run: |
+        echo "Waiting for server to start..."
+        timeout 30 bash -c 'while ! nc -z localhost 3000; do sleep 1; done'
+        echo "Server is up!"
+
+    # Restore baseline screenshots
+    - name: Restore baseline screenshots
+      uses: actions/cache@v3
+      with:
+        path: test-results/visual-tests/snapshots
+        key: visual-baseline-${{ needs.prepare.outputs.cache-key }}
+        restore-keys: |
+          visual-baseline-
+
+    # Run visual tests
+    - name: Run visual tests
+      run: |
+        npm run test:visual -- \
+          --browser=${{ matrix.browser }} \
+          --theme=${{ matrix.theme }} \
+          --viewport=${{ matrix.viewport }}
+      env:
+        CI: true
+        BROWSER: ${{ matrix.browser }}
+        THEME: ${{ matrix.theme }}
+        VIEWPORT: ${{ matrix.viewport }}
+
+    # Upload test results
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: visual-test-results-${{ matrix.browser }}-${{ matrix.theme }}-${{ matrix.viewport }}
+        path: |
+          test-results/visual-tests
+          !test-results/visual-tests/snapshots
+        retention-days: 30
+
+  # Generate combined report
+  report:
+    name: Generate Visual Test Report
+    needs: visual-tests
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    # Download all test results
+    - name: Download test results
+      uses: actions/download-artifact@v3
+      with:
+        path: artifacts
+
+    # Generate combined report
+    - name: Generate report
+      run: |
+        npm run report -- \
+          --format=html,markdown,json \
+          --input=artifacts \
+          --output=test-results/visual-report
+
+    # Upload combined report
+    - name: Upload combined report
+      uses: actions/upload-artifact@v3
+      with:
+        name: visual-test-report
+        path: test-results/visual-report
+        retention-days: 30
+
+    # Create issue for failures
+    - name: Create issue for failures
+      if: failure()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          
+          // Read test results
+          const results = {};
+          const artifactsDir = 'artifacts';
+          
+          fs.readdirSync(artifactsDir).forEach(dir => {
+            if (dir.startsWith('visual-test-results-')) {
+              const [_, browser, theme, viewport] = dir.split('-');
+              const resultPath = path.join(artifactsDir, dir, 'results.json');
+              
+              if (fs.existsSync(resultPath)) {
+                const result = JSON.parse(fs.readFileSync(resultPath, 'utf8'));
+                results[`${browser}-${theme}-${viewport}`] = result;
+              }
+            }
+          });
+          
+          // Create issue body
+          const issueBody = `
+          # Visual Test Failures
+          
+          ${Object.entries(results)
+            .filter(([_, result]) => result.failed > 0)
+            .map(([config, result]) => `
+          ## ${config}
+          - Failed: ${result.failed}
+          - Total: ${result.total}
+          - Duration: ${result.duration}s
+          
+          ### Failed Tests
+          ${result.tests
+            .filter(t => t.status === 'failed')
+            .map(t => `- ${t.name}: ${t.error}`).join('\n')}
+          `).join('\n')}
+          
+          [View full report](${context.payload.repository.html_url}/actions/runs/${context.runId})
+          `;
+          
+          // Create issue
+          await github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: '🖼️ Visual Test Failures',
+            body: issueBody,
+            labels: ['visual-testing', 'bug', 'automated']
+          });
+
+    # Clean up
+    - name: Cleanup
+      if: always()
+      run: |
+        pkill -f "npm run dev" || true
+        rm -rf artifacts/

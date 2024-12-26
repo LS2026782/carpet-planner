@@ -1,0 +1,71 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "ES2020",
+        "moduleResolution": "node",
+        "lib": [
+            "ES2020",
+            "DOM",
+            "DOM.Iterable"
+        ],
+        "jsx": "react",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "allowJs": true,
+        "checkJs": true,
+        "outDir": "./dist",
+        "rootDir": ".",
+        "baseUrl": ".",
+        "paths": {
+            "*": ["node_modules/*", "src/tests/types/*"]
+        },
+        "types": [
+            "node",
+            "jest",
+            "@testing-library/jest-dom",
+            "aria-query",
+            "eventemitter3",
+            "@playwright/test"
+        ],
+        "typeRoots": [
+            "./node_modules/@types",
+            "./src/tests/types"
+        ],
+        "resolveJsonModule": true,
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
+        "removeComments": false,
+        "noEmitOnError": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "allowSyntheticDefaultImports": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
+        "strictBindCallApply": true,
+        "strictPropertyInitialization": true,
+        "noImplicitOverride": true,
+        "useUnknownInCatchVariables": true,
+        "isolatedModules": true
+    },
+    "include": [
+        "src/**/*",
+        "__tests__/**/*",
+        "types/**/*",
+        "jest.config.js",
+        ".eslintrc.js",
+        ".prettierrc.js",
+        "playwright.config.ts",
+        "src/tests/types/*.d.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}

@@ -1,0 +1,11 @@
+{
+  "timestamp": "2024-12-21T20:42:46.489Z",
+  "duration": 0,
+  "totals": {
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+  },
+  "tests": []
+}

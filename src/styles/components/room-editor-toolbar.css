@@ -1,0 +1,167 @@
+.room-editor-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    background-color: var(--panel-bg-color, #fff);
+    border-bottom: 1px solid var(--border-color, #ddd);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.room-editor-toolbar__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 4px;
+    background-color: var(--button-bg-color, #fff);
+    color: var(--text-color, #333);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.room-editor-toolbar__button:hover {
+    background-color: var(--button-hover-bg-color, #f0f0f0);
+    border-color: var(--border-color-dark, #ccc);
+}
+
+.room-editor-toolbar__button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--primary-color-light, rgba(0, 102, 255, 0.2));
+}
+
+.room-editor-toolbar__button.active {
+    background-color: var(--primary-color, #0066ff);
+    border-color: var(--primary-color, #0066ff);
+    color: #fff;
+}
+
+.room-editor-toolbar__button.active:hover {
+    background-color: var(--primary-hover-color, #0052cc);
+}
+
+.room-editor-toolbar__button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.room-editor-toolbar__button.hidden {
+    display: none;
+}
+
+/* Button icons */
+.room-editor-toolbar__button .icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.room-editor-toolbar__button .icon::before {
+    font-family: 'Material Icons';
+    font-size: 20px;
+    line-height: 1;
+}
+
+.room-editor-toolbar__button .icon-edit::before { content: 'edit'; }
+.room-editor-toolbar__button .icon-grid::before { content: 'grid_on'; }
+.room-editor-toolbar__button .icon-snap::before { content: 'grid_4x4'; }
+.room-editor-toolbar__button .icon-add-point::before { content: 'add_circle'; }
+.room-editor-toolbar__button .icon-remove-point::before { content: 'remove_circle'; }
+.room-editor-toolbar__button .icon-undo::before { content: 'undo'; }
+.room-editor-toolbar__button .icon-redo::before { content: 'redo'; }
+.room-editor-toolbar__button .icon-delete::before { content: 'delete'; }
+
+/* Button groups */
+.room-editor-toolbar__group {
+    display: flex;
+    gap: 4px;
+    padding: 0 4px;
+    border-right: 1px solid var(--border-color, #ddd);
+}
+
+.room-editor-toolbar__group:last-child {
+    border-right: none;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .room-editor-toolbar {
+        background-color: var(--panel-bg-color-dark, #1a1a1a);
+        border-color: var(--border-color-dark, #404040);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .room-editor-toolbar__button {
+        background-color: var(--button-bg-color-dark, #2d2d2d);
+        border-color: var(--border-color-dark, #404040);
+        color: var(--text-color-dark, #fff);
+    }
+
+    .room-editor-toolbar__button:hover {
+        background-color: var(--button-hover-bg-color-dark, #404040);
+        border-color: var(--border-color-light-dark, #666);
+    }
+
+    .room-editor-toolbar__button:focus {
+        box-shadow: 0 0 0 2px var(--primary-color-dark, rgba(102, 179, 255, 0.2));
+    }
+
+    .room-editor-toolbar__button.active {
+        background-color: var(--primary-color-dark, #66b3ff);
+        border-color: var(--primary-color-dark, #66b3ff);
+    }
+
+    .room-editor-toolbar__button.active:hover {
+        background-color: var(--primary-hover-color-dark, #3399ff);
+    }
+
+    .room-editor-toolbar__group {
+        border-color: var(--border-color-dark, #404040);
+    }
+}
+
+/* High contrast mode support */
+@media (forced-colors: active) {
+    .room-editor-toolbar__button {
+        border: 1px solid ButtonText;
+    }
+
+    .room-editor-toolbar__button:focus {
+        outline: 2px solid ButtonText;
+        outline-offset: 2px;
+    }
+
+    .room-editor-toolbar__button.active {
+        forced-color-adjust: none;
+        background-color: Highlight;
+        color: HighlightText;
+    }
+
+    .room-editor-toolbar__group {
+        border-color: ButtonText;
+    }
+}
+
+/* Tooltip customizations */
+.room-editor-toolbar .tooltip {
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.room-editor-toolbar .tooltip__shortcut {
+    margin-left: 8px;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: var(--monospace-font);
+    font-size: 11px;
+    background-color: var(--tooltip-shortcut-bg-color);
+    color: var(--tooltip-shortcut-text-color);
+    border: 1px solid var(--tooltip-shortcut-border-color);
+}

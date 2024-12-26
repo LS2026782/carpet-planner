@@ -1,0 +1,193 @@
+.room-property-panel {
+    padding: 1rem;
+    background-color: var(--panel-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--panel-shadow);
+}
+
+.room-property-panel .measurements {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.room-property-panel .measurement {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.room-property-panel .measurement label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.room-property-panel .measurement span {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.room-property-panel .validation-errors {
+    margin: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.room-property-panel .validation-error {
+    padding: 0.75rem;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.room-property-panel .validation-error.error {
+    background-color: var(--error-bg);
+    color: var(--error-text);
+    border: 1px solid var(--error-border);
+}
+
+.room-property-panel .validation-error.warning {
+    background-color: var(--warning-bg);
+    color: var(--warning-text);
+    border: 1px solid var(--warning-border);
+}
+
+.room-property-panel .point-list {
+    margin: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.room-property-panel .point {
+    padding: 0.75rem;
+    border-radius: var(--border-radius-sm);
+    background-color: var(--surface-bg);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.room-property-panel .point:hover {
+    background-color: var(--surface-hover);
+    border-color: var(--border-hover);
+}
+
+.room-property-panel .point.selected {
+    background-color: var(--primary-bg);
+    border-color: var(--primary-color);
+    color: var(--primary-text);
+}
+
+.room-property-panel .point-editor {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: var(--surface-bg);
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--border-color);
+}
+
+.room-property-panel .coordinate {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.room-property-panel .coordinate:last-child {
+    margin-bottom: 0;
+}
+
+.room-property-panel .coordinate label {
+    min-width: 2rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.room-property-panel .coordinate input {
+    flex: 1;
+    padding: 0.5rem;
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.room-property-panel .coordinate input:hover {
+    border-color: var(--border-hover);
+}
+
+.room-property-panel .coordinate input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px var(--primary-shadow);
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+    .room-property-panel {
+        background-color: var(--panel-bg-dark);
+    }
+
+    .room-property-panel .point {
+        background-color: var(--surface-bg-dark);
+        border-color: var(--border-color-dark);
+    }
+
+    .room-property-panel .point:hover {
+        background-color: var(--surface-hover-dark);
+        border-color: var(--border-hover-dark);
+    }
+
+    .room-property-panel .point.selected {
+        background-color: var(--primary-bg-dark);
+        border-color: var(--primary-color-dark);
+        color: var(--primary-text-dark);
+    }
+
+    .room-property-panel .point-editor {
+        background-color: var(--surface-bg-dark);
+        border-color: var(--border-color-dark);
+    }
+
+    .room-property-panel .coordinate input {
+        background-color: var(--input-bg-dark);
+        border-color: var(--border-color-dark);
+        color: var(--text-primary-dark);
+    }
+
+    .room-property-panel .coordinate input:hover {
+        border-color: var(--border-hover-dark);
+    }
+
+    .room-property-panel .coordinate input:focus {
+        border-color: var(--primary-color-dark);
+        box-shadow: 0 0 0 2px var(--primary-shadow-dark);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .room-property-panel .measurements {
+        grid-template-columns: 1fr;
+    }
+
+    .room-property-panel .coordinate {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .room-property-panel .coordinate label {
+        min-width: auto;
+    }
+
+    .room-property-panel .coordinate input {
+        width: 100%;
+    }
+}

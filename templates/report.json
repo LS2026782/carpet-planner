@@ -1,0 +1,199 @@
+{
+  "metadata": {
+    "timestamp": "{{timestamp}}",
+    "version": "{{version}}",
+    "repository": "{{repository}}",
+    "branch": "{{branch}}",
+    "commit": "{{commit}}",
+    "runId": "{{runId}}"
+  },
+  "summary": {
+    "total": {{totalTests}},
+    "passed": {{passed}},
+    "failed": {{failed}},
+    "skipped": {{skipped}},
+    "duration": {{duration}},
+    "status": "{{status}}"
+  },
+  "environment": {
+    "node": "{{env.node}}",
+    "os": "{{env.os}}",
+    "ci": {{env.ci}},
+    "platform": "{{env.platform}}",
+    "arch": "{{env.arch}}",
+    "memory": {
+      "total": {{env.memory.total}},
+      "free": {{env.memory.free}},
+      "used": {{env.memory.used}}
+    }
+  },
+  "configuration": {
+    "browsers": [
+      {{#each config.browsers}}
+      {
+        "name": "{{name}}",
+        "version": "{{version}}",
+        "headless": {{headless}}
+      }{{#unless @last}},{{/unless}}
+      {{/each}}
+    ],
+    "themes": [
+      {{#each config.themes}}
+      {
+        "name": "{{name}}",
+        "type": "{{type}}",
+        "features": [
+          {{#each features}}
+          "{{this}}"{{#unless @last}},{{/unless}}
+          {{/each}}
+        ]
+      }{{#unless @last}},{{/unless}}
+      {{/each}}
+    ],
+    "retries": {{config.retries}},
+    "workers": {{config.workers}},
+    "timeout": {{config.timeout}},
+    "parallelization": {{config.parallelization}}
+  },
+  "browserResults": {
+    {{#each browsers}}
+    "{{name}}": {
+      "total": {{stats.total}},
+      "passed": {{stats.passed}},
+      "failed": {{stats.failed}},
+      "skipped": {{stats.skipped}},
+      "duration": {{stats.duration}},
+      "tests": [
+        {{#each tests}}
+        {
+          "id": "{{id}}",
+          "name": "{{name}}",
+          "theme": "{{theme}}",
+          "status": "{{status}}",
+          "duration": {{duration}},
+          {{#if error}}
+          "error": {
+            "message": "{{error.message}}",
+            "type": "{{error.type}}",
+            "stack": "{{error.stack}}"
+          },
+          {{/if}}
+          {{#if skipped}}
+          "skipped": {
+            "reason": "{{skipped.reason}}"
+          },
+          {{/if}}
+          "metadata": {{json metadata}},
+          "logs": {{json logs}}
+        }{{#unless @last}},{{/unless}}
+        {{/each}}
+      ]
+    }{{#unless @last}},{{/unless}}
+    {{/each}}
+  },
+  "themeResults": {
+    {{#each themes}}
+    "{{name}}": {
+      "total": {{stats.total}},
+      "passed": {{stats.passed}},
+      "failed": {{stats.failed}},
+      "skipped": {{stats.skipped}},
+      "duration": {{stats.duration}},
+      "tests": [
+        {{#each tests}}
+        {
+          "id": "{{id}}",
+          "name": "{{name}}",
+          "browser": "{{browser}}",
+          "status": "{{status}}",
+          "duration": {{duration}},
+          {{#if error}}
+          "error": {
+            "message": "{{error.message}}",
+            "type": "{{error.type}}",
+            "stack": "{{error.stack}}"
+          },
+          {{/if}}
+          {{#if skipped}}
+          "skipped": {
+            "reason": "{{skipped.reason}}"
+          },
+          {{/if}}
+          "metadata": {{json metadata}},
+          "logs": {{json logs}}
+        }{{#unless @last}},{{/unless}}
+        {{/each}}
+      ]
+    }{{#unless @last}},{{/unless}}
+    {{/each}}
+  },
+  "metrics": {
+    "performance": {
+      "averageDuration": {{metrics.averageDuration}},
+      "slowestTest": {
+        "name": "{{metrics.slowestTest}}",
+        "duration": {{metrics.slowestDuration}}
+      },
+      "fastestTest": {
+        "name": "{{metrics.fastestTest}}",
+        "duration": {{metrics.fastestDuration}}
+      }
+    },
+    "resources": {
+      "memory": {
+        "peak": {{resources.peakMemory}},
+        "average": {{resources.averageMemory}}
+      },
+      "cpu": {
+        "peak": {{resources.peakCpu}},
+        "average": {{resources.averageCpu}}
+      },
+      "network": {
+        "requests": {{resources.networkRequests}},
+        "bytes": {{resources.networkBytes}}
+      }
+    }
+  },
+  "artifacts": {
+    "screenshots": [
+      {{#each artifacts.screenshots}}
+      {
+        "name": "{{name}}",
+        "path": "{{path}}",
+        "timestamp": "{{timestamp}}",
+        "metadata": {{json metadata}}
+      }{{#unless @last}},{{/unless}}
+      {{/each}}
+    ],
+    "traces": [
+      {{#each artifacts.traces}}
+      {
+        "name": "{{name}}",
+        "path": "{{path}}",
+        "timestamp": "{{timestamp}}",
+        "metadata": {{json metadata}}
+      }{{#unless @last}},{{/unless}}
+      {{/each}}
+    ],
+    "videos": [
+      {{#each artifacts.videos}}
+      {
+        "name": "{{name}}",
+        "path": "{{path}}",
+        "timestamp": "{{timestamp}}",
+        "metadata": {{json metadata}}
+      }{{#unless @last}},{{/unless}}
+      {{/each}}
+    ]
+  },
+  "annotations": [
+    {{#each annotations}}
+    {
+      "type": "{{type}}",
+      "message": "{{message}}",
+      "timestamp": "{{timestamp}}",
+      "metadata": {{json metadata}}
+    }{{#unless @last}},{{/unless}}
+    {{/each}}
+  ]
+}

@@ -1,0 +1,205 @@
+/* High Contrast Theme
+ * This theme follows WCAG 2.1 guidelines for high contrast
+ * Minimum contrast ratio: 7:1 for normal text, 4.5:1 for large text
+ */
+
+[data-theme="high-contrast"] {
+    /* Base colors */
+    --primary-color: #ffff00; /* Yellow */
+    --secondary-color: #ffffff; /* White */
+    --background-color: #000000; /* Black */
+    --text-color: #ffffff; /* White */
+    --error-color: #ff0000; /* Red */
+    --success-color: #00ff00; /* Green */
+    --warning-color: #ffff00; /* Yellow */
+    --info-color: #00ffff; /* Cyan */
+
+    /* Border colors */
+    --border-color: #ffffff;
+    --focus-ring-color: #ffff00;
+    --separator-color: #ffffff;
+
+    /* Interactive element colors */
+    --button-background: #000000;
+    --button-text: #ffffff;
+    --button-border: #ffffff;
+    --button-hover-background: #ffffff;
+    --button-hover-text: #000000;
+    --button-active-background: #ffff00;
+    --button-active-text: #000000;
+    --button-disabled-background: #666666;
+    --button-disabled-text: #ffffff;
+
+    /* Form element colors */
+    --input-background: #000000;
+    --input-text: #ffffff;
+    --input-border: #ffffff;
+    --input-placeholder: #cccccc;
+    --input-focus-border: #ffff00;
+    --input-error-border: #ff0000;
+    --input-success-border: #00ff00;
+
+    /* Canvas colors */
+    --canvas-background: #000000;
+    --canvas-grid: #333333;
+    --canvas-grid-major: #666666;
+    --canvas-point: #ffff00;
+    --canvas-line: #ffffff;
+    --canvas-selection: #00ffff;
+    --canvas-measurement: #00ff00;
+    --canvas-error: #ff0000;
+
+    /* Room colors */
+    --room-fill: transparent;
+    --room-stroke: #ffffff;
+    --room-selected: #ffff00;
+    --room-hovered: #00ffff;
+    --room-invalid: #ff0000;
+    --room-point: #ffffff;
+    --room-point-selected: #ffff00;
+    --room-point-hovered: #00ffff;
+
+    /* Door colors */
+    --door-stroke: #ffffff;
+    --door-fill: #000000;
+    --door-selected: #ffff00;
+    --door-hovered: #00ffff;
+    --door-invalid: #ff0000;
+    --door-handle: #ffffff;
+    --door-swing: #666666;
+
+    /* Measurement colors */
+    --measurement-text: #ffffff;
+    --measurement-line: #00ff00;
+    --measurement-point: #ffff00;
+    --measurement-background: rgba(0, 0, 0, 0.8);
+
+    /* Panel colors */
+    --panel-background: #000000;
+    --panel-border: #ffffff;
+    --panel-text: #ffffff;
+    --panel-header: #ffffff;
+    --panel-separator: #ffffff;
+
+    /* Toolbar colors */
+    --toolbar-background: #000000;
+    --toolbar-border: #ffffff;
+    --toolbar-text: #ffffff;
+    --toolbar-button: #000000;
+    --toolbar-button-hover: #ffffff;
+    --toolbar-button-active: #ffff00;
+
+    /* Modal colors */
+    --modal-background: #000000;
+    --modal-border: #ffffff;
+    --modal-text: #ffffff;
+    --modal-header: #ffffff;
+    --modal-overlay: rgba(0, 0, 0, 0.9);
+
+    /* Focus indicators */
+    --focus-outline: 3px solid #ffff00;
+    --focus-outline-offset: 2px;
+
+    /* Scrollbar colors */
+    --scrollbar-track: #000000;
+    --scrollbar-thumb: #ffffff;
+    --scrollbar-thumb-hover: #ffff00;
+
+    /* Status colors */
+    --status-info-background: #000066;
+    --status-info-text: #ffffff;
+    --status-success-background: #006600;
+    --status-success-text: #ffffff;
+    --status-warning-background: #666600;
+    --status-warning-text: #ffffff;
+    --status-error-background: #660000;
+    --status-error-text: #ffffff;
+}
+
+/* High contrast specific overrides */
+[data-theme="high-contrast"] {
+    /* Remove shadows */
+    * {
+        text-shadow: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Enhance focus indicators */
+    *:focus {
+        outline: var(--focus-outline) !important;
+        outline-offset: var(--focus-outline-offset) !important;
+    }
+
+    /* Enhance buttons */
+    .button {
+        border: 2px solid var(--button-border);
+    }
+
+    /* Enhance form elements */
+    input,
+    select,
+    textarea {
+        border: 2px solid var(--input-border);
+    }
+
+    /* Enhance links */
+    a {
+        text-decoration: underline !important;
+    }
+
+    /* Enhance canvas elements */
+    .canvas-cursor {
+        border-width: 2px;
+    }
+
+    .canvas-grid-line {
+        opacity: 1 !important;
+    }
+
+    /* Enhance modal dialogs */
+    .modal {
+        border: 2px solid var(--modal-border);
+    }
+
+    /* Enhance tooltips */
+    .tooltip {
+        border: 2px solid var(--border-color);
+        background-color: var(--background-color) !important;
+    }
+
+    /* Enhance notifications */
+    .notification {
+        border: 2px solid var(--border-color);
+    }
+}
+
+/* Print styles for high contrast theme */
+@media print {
+    [data-theme="high-contrast"] {
+        --background-color: #ffffff;
+        --text-color: #000000;
+        --border-color: #000000;
+        
+        /* Ensure good print contrast */
+        * {
+            color: var(--text-color) !important;
+            background-color: var(--background-color) !important;
+            border-color: var(--border-color) !important;
+        }
+    }
+}
+
+/* Forced colors mode support */
+@media (forced-colors: active) {
+    [data-theme="high-contrast"] {
+        --primary-color: CanvasText;
+        --secondary-color: Canvas;
+        --background-color: Canvas;
+        --text-color: CanvasText;
+        --border-color: CanvasText;
+        --focus-ring-color: Highlight;
+        
+        /* Let system handle colors */
+        forced-color-adjust: none;
+    }
+}

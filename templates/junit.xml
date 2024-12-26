@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Carpet Planner Tests" tests="{{totalTests}}" failures="{{failed}}" skipped="{{skipped}}" time="{{duration}}" timestamp="{{timestamp}}">
+    {{#each browsers}}
+    <testsuite name="{{name}}" tests="{{stats.total}}" failures="{{stats.failed}}" skipped="{{stats.skipped}}" time="{{stats.duration}}" timestamp="{{../timestamp}}">
+        {{#each tests}}
+        <testcase name="{{name}}" classname="{{../name}}" time="{{duration}}">
+            {{#if error}}
+            <failure message="{{error.message}}" type="{{error.type}}">
+                <![CDATA[{{error.stack}}]]>
+            </failure>
+            {{/if}}
+            {{#if skipped}}
+            <skipped message="{{skipped.reason}}"/>
+            {{/if}}
+            <properties>
+                <property name="browser" value="{{../name}}"/>
+                <property name="theme" value="{{theme}}"/>
+                <property name="status" value="{{status}}"/>
+                {{#each metadata}}
+                <property name="{{@key}}" value="{{this}}"/>
+                {{/each}}
+            </properties>
+            <system-out>
+                <![CDATA[
+                Browser: {{../name}}
+                Theme: {{theme}}
+                Status: {{status}}
+                Duration: {{duration}}s
+                {{#if logs}}
+                Logs:
+                {{logs}}
+                {{/if}}
+                ]]>
+            </system-out>
+            {{#if error}}
+            <system-err>
+                <![CDATA[{{error.stack}}]]>
+            </system-err>
+            {{/if}}
+        </testcase>
+        {{/each}}
+    </testsuite>
+    {{/each}}
+
+    {{#each themes}}
+    <testsuite name="Theme - {{name}}" tests="{{stats.total}}" failures="{{stats.failed}}" skipped="{{stats.skipped}}" time="{{stats.duration}}" timestamp="{{../timestamp}}">
+        {{#each tests}}
+        <testcase name="{{name}}" classname="Theme - {{../name}}" time="{{duration}}">
+            {{#if error}}
+            <failure message="{{error.message}}" type="{{error.type}}">
+                <![CDATA[{{error.stack}}]]>
+            </failure>
+            {{/if}}
+            {{#if skipped}}
+            <skipped message="{{skipped.reason}}"/>
+            {{/if}}
+            <properties>
+                <property name="browser" value="{{browser}}"/>
+                <property name="theme" value="{{../name}}"/>
+                <property name="status" value="{{status}}"/>
+                {{#each metadata}}
+                <property name="{{@key}}" value="{{this}}"/>
+                {{/each}}
+            </properties>
+            <system-out>
+                <![CDATA[
+                Browser: {{browser}}
+                Theme: {{../name}}
+                Status: {{status}}
+                Duration: {{duration}}s
+                {{#if logs}}
+                Logs:
+                {{logs}}
+                {{/if}}
+                ]]>
+            </system-out>
+            {{#if error}}
+            <system-err>
+                <![CDATA[{{error.stack}}]]>
+            </system-err>
+            {{/if}}
+        </testcase>
+        {{/each}}
+    </testsuite>
+    {{/each}}
+
+    <testsuite name="Performance Metrics" tests="3" failures="0" skipped="0" time="0">
+        <testcase name="Average Test Duration" classname="Performance">
+            <properties>
+                <property name="value" value="{{metrics.averageDuration}}"/>
+                <property name="unit" value="seconds"/>
+            </properties>
+        </testcase>
+        <testcase name="Slowest Test" classname="Performance">
+            <properties>
+                <property name="test" value="{{metrics.slowestTest}}"/>
+                <property name="duration" value="{{metrics.slowestDuration}}"/>
+                <property name="unit" value="seconds"/>
+            </properties>
+        </testcase>
+        <testcase name="Fastest Test" classname="Performance">
+            <properties>
+                <property name="test" value="{{metrics.fastestTest}}"/>
+                <property name="duration" value="{{metrics.fastestDuration}}"/>
+                <property name="unit" value="seconds"/>
+            </properties>
+        </testcase>
+    </testsuite>
+
+    <testsuite name="Resource Usage" tests="3" failures="0" skipped="0" time="0">
+        <testcase name="Memory Usage" classname="Resources">
+            <properties>
+                <property name="peak" value="{{resources.peakMemory}}"/>
+                <property name="unit" value="bytes"/>
+            </properties>
+        </testcase>
+        <testcase name="CPU Usage" classname="Resources">
+            <properties>
+                <property name="value" value="{{resources.cpuUsage}}"/>
+                <property name="unit" value="percent"/>
+            </properties>
+        </testcase>
+        <testcase name="Network I/O" classname="Resources">
+            <properties>
+                <property name="value" value="{{resources.networkIO}}"/>
+                <property name="unit" value="bytes"/>
+            </properties>
+        </testcase>
+    </testsuite>
+
+    <testsuite name="Environment" tests="3" failures="0" skipped="0" time="0">
+        <testcase name="Node Version" classname="Environment">
+            <properties>
+                <property name="version" value="{{env.node}}"/>
+            </properties>
+        </testcase>
+        <testcase name="Operating System" classname="Environment">
+            <properties>
+                <property name="os" value="{{env.os}}"/>
+            </properties>
+        </testcase>
+        <testcase name="CI Environment" classname="Environment">
+            <properties>
+                <property name="ci" value="{{env.ci}}"/>
+            </properties>
+        </testcase>
+    </testsuite>
+</testsuites>

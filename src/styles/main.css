@@ -1,0 +1,193 @@
+/* Base styles */
+@import './variables/variables.css';
+
+/* Layout */
+@import './layout/layout.css';
+
+/* Components */
+@import './components/toolbar.css';
+@import './components/room.css';
+@import './components/panels.css';
+@import './components/canvas.css';
+@import './components/error-boundary.css';
+@import './components/canvas-accessibility.css';
+
+/* Global styles */
+:root {
+    /* Base colors */
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --error-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+
+    /* UI colors */
+    --background-color: #ffffff;
+    --text-color: #212529;
+    --border-color: #dee2e6;
+    --focus-ring-color: rgba(0, 123, 255, 0.25);
+
+    /* Code colors */
+    --code-background: #f8f9fa;
+    --code-color: #666666;
+
+    /* Button colors */
+    --button-text-color: #ffffff;
+    --primary-color-hover: #0056b3;
+    --primary-color-focus: rgba(0, 123, 255, 0.25);
+
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+
+    /* Typography */
+    --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --font-size-base: 16px;
+    --line-height-base: 1.5;
+
+    /* Border radius */
+    --border-radius-sm: 0.25rem;
+    --border-radius-md: 0.375rem;
+    --border-radius-lg: 0.5rem;
+
+    /* Transitions */
+    --transition-base: all 0.2s ease-in-out;
+    --transition-fast: all 0.15s ease-in-out;
+    --transition-slow: all 0.3s ease-in-out;
+
+    /* Z-index layers */
+    --z-index-dropdown: 1000;
+    --z-index-sticky: 1020;
+    --z-index-fixed: 1030;
+    --z-index-modal-backdrop: 1040;
+    --z-index-modal: 1050;
+    --z-index-popover: 1060;
+    --z-index-tooltip: 1070;
+
+    /* Accessibility */
+    --focus-outline-width: 3px;
+    --focus-outline-offset: 2px;
+    --focus-outline-color: rgba(0, 123, 255, 0.25);
+    --high-contrast-outline: 2px solid currentColor;
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+    --primary-color: #0066cc;
+    --secondary-color: #495057;
+    --background-color: #1a1a1a;
+    --text-color: #f8f9fa;
+    --border-color: #333333;
+    --code-background: #2d2d2d;
+    --code-color: #d4d4d4;
+    --focus-outline-color: rgba(0, 102, 204, 0.25);
+}
+
+/* Base styles */
+html {
+    box-sizing: border-box;
+    font-size: var(--font-size-base);
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+*, *::before, *::after {
+    box-sizing: inherit;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-family-base);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: var(--line-height-base);
+    color: var(--text-color);
+    background-color: var(--background-color);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Focus styles */
+:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 var(--focus-outline-width) var(--focus-outline-color);
+    outline-offset: var(--focus-outline-offset);
+}
+
+/* High contrast mode */
+@media (forced-colors: active) {
+    :focus-visible {
+        outline: var(--high-contrast-outline);
+        box-shadow: none;
+    }
+}
+
+/* Accessibility */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.sr-only-focusable:active,
+.sr-only-focusable:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+}
+
+/* Utility classes */
+.visually-hidden {
+    visibility: hidden !important;
+}
+
+.d-none {
+    display: none !important;
+}
+
+.position-relative {
+    position: relative !important;
+}
+
+.position-absolute {
+    position: absolute !important;
+}
+
+.w-100 {
+    width: 100% !important;
+}
+
+.h-100 {
+    height: 100% !important;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+    html {
+        font-size: calc(var(--font-size-base) * 0.875);
+    }
+}

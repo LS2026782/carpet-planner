@@ -1,0 +1,148 @@
+.tooltip {
+    position: fixed;
+    z-index: 1100;
+    pointer-events: none;
+    opacity: 1;
+    transform-origin: center;
+    animation: tooltip-fade-in 0.15s ease-out;
+}
+
+.tooltip.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.tooltip__content {
+    background-color: var(--tooltip-bg-color, rgba(33, 33, 33, 0.95));
+    color: var(--tooltip-text-color, #fff);
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1.4;
+    max-width: 300px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.tooltip__shortcut {
+    display: inline-block;
+    padding: 2px 4px;
+    font-family: var(--monospace-font);
+    font-size: 11px;
+    line-height: 1;
+    color: var(--tooltip-shortcut-text-color, rgba(255, 255, 255, 0.9));
+    background-color: var(--tooltip-shortcut-bg-color, rgba(255, 255, 255, 0.1));
+    border: 1px solid var(--tooltip-shortcut-border-color, rgba(255, 255, 255, 0.2));
+    border-radius: 3px;
+    min-width: 16px;
+    text-align: center;
+}
+
+/* Tooltip positions */
+.tooltip[data-position='top'] .tooltip__content::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid var(--tooltip-bg-color, rgba(33, 33, 33, 0.95));
+}
+
+.tooltip[data-position='bottom'] .tooltip__content::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 4px solid var(--tooltip-bg-color, rgba(33, 33, 33, 0.95));
+}
+
+.tooltip[data-position='left'] .tooltip__content::after {
+    content: '';
+    position: absolute;
+    right: -4px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 4px solid var(--tooltip-bg-color, rgba(33, 33, 33, 0.95));
+}
+
+.tooltip[data-position='right'] .tooltip__content::after {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-right: 4px solid var(--tooltip-bg-color, rgba(33, 33, 33, 0.95));
+}
+
+/* Animations */
+@keyframes tooltip-fade-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .tooltip__content {
+        background-color: var(--tooltip-bg-color-dark, rgba(255, 255, 255, 0.95));
+        color: var(--tooltip-text-color-dark, #000);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .tooltip__shortcut {
+        color: var(--tooltip-shortcut-text-color-dark, rgba(0, 0, 0, 0.9));
+        background-color: var(--tooltip-shortcut-bg-color-dark, rgba(0, 0, 0, 0.1));
+        border-color: var(--tooltip-shortcut-border-color-dark, rgba(0, 0, 0, 0.2));
+    }
+
+    .tooltip[data-position='top'] .tooltip__content::after {
+        border-top-color: var(--tooltip-bg-color-dark, rgba(255, 255, 255, 0.95));
+    }
+
+    .tooltip[data-position='bottom'] .tooltip__content::after {
+        border-bottom-color: var(--tooltip-bg-color-dark, rgba(255, 255, 255, 0.95));
+    }
+
+    .tooltip[data-position='left'] .tooltip__content::after {
+        border-left-color: var(--tooltip-bg-color-dark, rgba(255, 255, 255, 0.95));
+    }
+
+    .tooltip[data-position='right'] .tooltip__content::after {
+        border-right-color: var(--tooltip-bg-color-dark, rgba(255, 255, 255, 0.95));
+    }
+}
+
+/* High contrast mode support */
+@media (forced-colors: active) {
+    .tooltip__content {
+        border: 1px solid ButtonText;
+    }
+
+    .tooltip__shortcut {
+        border: 1px solid ButtonText;
+    }
+
+    .tooltip[data-position='top'] .tooltip__content::after,
+    .tooltip[data-position='bottom'] .tooltip__content::after,
+    .tooltip[data-position='left'] .tooltip__content::after,
+    .tooltip[data-position='right'] .tooltip__content::after {
+        display: none;
+    }
+}
