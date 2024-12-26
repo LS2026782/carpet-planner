@@ -20,10 +20,41 @@ import { ErrorBoundary } from './components/error/ErrorBoundary';
 document.addEventListener('DOMContentLoaded', () => {
     // Get DOM elements
     const canvas = document.getElementById('main-canvas') as HTMLCanvasElement;
+    const canvasContainer = document.getElementById('canvas-container') as HTMLElement;
     const toolbarContainer = document.getElementById('toolbar') as HTMLElement;
     const settingsPanelContainer = document.getElementById('settings-panel') as HTMLElement;
     const calculationsPanelContainer = document.getElementById('calculations-panel') as HTMLElement;
     const errorContainer = document.getElementById('error-container') as HTMLElement;
+
+    // Create canvas wrapper with grid layout
+    const canvasWrapper = document.createElement('div');
+    canvasWrapper.className = 'canvas-wrapper';
+    canvas.parentElement?.insertBefore(canvasWrapper, canvas);
+
+    // Create rulers
+    const rulerCorner = document.createElement('div');
+    rulerCorner.className = 'ruler-corner';
+    canvasWrapper.appendChild(rulerCorner);
+
+    const rulerHorizontal = document.createElement('div');
+    rulerHorizontal.className = 'ruler-horizontal';
+    canvasWrapper.appendChild(rulerHorizontal);
+
+    const rulerVertical = document.createElement('div');
+    rulerVertical.className = 'ruler-vertical';
+    canvasWrapper.appendChild(rulerVertical);
+
+    // Create scrollable content container
+    const canvasContent = document.createElement('div');
+    canvasContent.className = 'canvas-content';
+    canvasContent.appendChild(canvas);
+    canvasWrapper.appendChild(canvasContent);
+
+    // Add scroll synchronization
+    canvasContent.addEventListener('scroll', () => {
+        rulerHorizontal.style.transform = `translateX(-${canvasContent.scrollLeft}px)`;
+        rulerVertical.style.transform = `translateY(-${canvasContent.scrollTop}px)`;
+    });
 
     // Initialize managers
     const errorManager = new ErrorManager({
@@ -94,11 +125,21 @@ document.addEventListener('DOMContentLoaded', () => {
         interactionManager
     );
 
+    // Initialize UI components with settings
+    const calculationsPanel = new CalculationsPanel({
+        container: calculationsPanelContainer,
+        units: 'meters'
+    });
+
     const settingsPanel = new SettingsPanel({
         container: settingsPanelContainer,
         onSettingChange: (setting, value) => {
             try {
-                // Handle settings changes
+                if (setting === 'units') {
+                    const units = value as 'meters' | 'feet';
+                    canvasManager.getMeasurementRenderer().setUnits(units);
+                    calculationsPanel.setUnit(units);
+                }
                 console.log('Setting changed:', setting, value);
                 errorManager.info(`Setting "${setting}" updated successfully`);
             } catch (error: unknown) {
@@ -108,16 +149,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const calculationsPanel = new CalculationsPanel({
-        container: calculationsPanelContainer,
-        units: 'meters'
-    });
-
     // Setup canvas size
     const resizeCanvas = () => {
         const container = canvas.parentElement as HTMLElement;
-        canvas.width = container.clientWidth;
-        canvas.height = container.clientHeight;
+        canvas.width = Math.max(container.clientWidth, 800);
+        canvas.height = Math.max(container.clientHeight, 600);
+        canvas.style.position = 'relative';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
         canvasManager.handleResize();
     };
 
